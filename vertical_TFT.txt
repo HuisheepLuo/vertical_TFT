@@ -1,0 +1,244 @@
+#SCLT tft simulation
+#with base above dielectric
+#semiconductor: p-TYPE
+#WF offset=0.4
+#defect off
+#trap off
+#L=1.8 Ld=0.5 d=0.3 pitch=0.6 tal203=0.02 tbase=0.02
+
+go atlas
+title Organic-TFT simulation
+#
+mesh smooth=1 width=100 
+
+x.m l=0 s=0.1
+x.m l=1.9 s=0.1
+x.m l=1.9 s=0.02
+x.m l=1.99 s=0.02
+x.m l=1.99 s=0.001
+x.m l=2 s=0.001
+x.m l=2.02 s=0.01
+x.m l=2.3 s=0.1
+x.m l=2.58 s=0.01
+x.m l=2.6 s=0.001
+x.m l=2.61 s=0.001
+x.m l=2.61 s=0.02
+x.m l=2.7 s=0.02
+x.m l=2.7 s=0.1
+x.m l=4.6 s=0.1
+
+y.m l=0.54 s=0.01
+y.m l=0.14 s=0.002
+y.m l=-0.1 s=0.002
+y.m l=-0.5 s=0.01
+y.m l=-1.1 s=0.1
+y.m l=-1.2 s=0.01
+
+#
+
+
+
+region num=1 material=sio2 y.min=0.04 y.max=0.54 x.min=2 x.max=2.6
+
+region num=2 material=pentacene y.min=-1.2 y.max=0.54 x.min=0 x.max=2 
+region num=3 material=pentacene y.min=-1.2 y.max=0.54 x.min=2.6 x.max=4.6
+
+region num=4 material=pentacene y.min=-1.2 y.max=0 x.min=2 x.max=2.6
+
+region num=5 material=al2o3 y.min=0.00 y.max=0.02 x.min=2 x.max=2.6
+region num=5 material=al2o3 y.min=0.02 y.max=0.04 x.min=2 x.max=2.02
+region num=5 material=al2o3 y.min=0.02 y.max=0.04 x.min=2.58 x.max=2.6
+
+
+elec num=1 name=drain bottom
+elec num=2 name=gate y.min=0.02 y.max=0.04 x.min=2.02 x.max=2.58
+elec num=3 name=source top
+#
+# We define the gate as N.POLY.  This pins the gate workfunction
+# to the conduction band edge of silicon.
+#
+contact num=1 workf=5.1
+contact num=2 workf=4.3 SURF.REC BARRIER
+contact num=3 workf=5.1
+#
+# We also define a workfunction for the source and drain that
+# is very close to the conduction edge.  In the reference the
+# authors observed that without a workfunction the results for
+# ohmic boundaries were not significantly different than the
+# Schottky model.
+#
+
+
+
+material reg= 2\
+         eg300=2 affinity=3 nc300=2e19 nv300=2e19 permittivity=3 \
+         mun=0 mup=10 
+material reg= 3\
+         eg300=2 affinity=3 nc300=2e19 nv300=2e19 permittivity=3 \
+         mun=0 mup=10 
+material reg= 4\
+         eg300=2 affinity=3 nc300=2e19 nv300=2e19 permittivity=3 \
+         mun=0 mup=10 
+
+
+model fermi
+
+model print
+
+
+solve init
+solve prev
+save outf=sclt_tft.str
+
+solve vgate=0
+save outf=sclt_tftout_0V.str
+solve vgate=-1.5
+save outf=sclt_tftout_1.5V.str
+solve vgate=-3
+save outf=sclt_tftout_3V.str
+
+
+probe name=sideV_20 POTENTIAL X=2.58 Y=0.03
+probe name=sideV_10 POTENTIAL X=2.59 Y=0.03
+probe name=sideV00 POTENTIAL X=2.6 Y=0.03
+probe name=sideV01 POTENTIAL X=2.601 Y=0.03
+probe name=sideV02 POTENTIAL X=2.602 Y=0.03
+probe name=sideV03 POTENTIAL X=2.603 Y=0.03
+probe name=sideV04 POTENTIAL X=2.604 Y=0.03
+probe name=sideV05 POTENTIAL X=2.605 Y=0.03
+probe name=sideV07 POTENTIAL X=2.607 Y=0.03
+probe name=sideV10 POTENTIAL X=2.61 Y=0.03
+probe name=sideV20 POTENTIAL X=2.62 Y=0.03
+probe name=sideV30 POTENTIAL X=2.63 Y=0.03
+probe name=sideV40 POTENTIAL X=2.64 Y=0.03
+probe name=sideV50 POTENTIAL X=2.65 Y=0.03
+probe name=sideV70 POTENTIAL X=2.67 Y=0.03
+probe name=sideV100 POTENTIAL X=2.7 Y=0.03
+probe name=sideV200 POTENTIAL X=2.8 Y=0.03
+probe name=sideV300 POTENTIAL X=2.9 Y=0.03
+probe name=sideV400 POTENTIAL X=3 Y=0.03
+probe name=sideV500 POTENTIAL X=3.1 Y=0.03
+probe name=sideV700 POTENTIAL X=3.3 Y=0.03
+probe name=sideV1000 POTENTIAL X=3.6 Y=0.03
+probe name=sideV1500 POTENTIAL X=4.1 Y=0.03
+probe name=sideV2000 POTENTIAL X=4.6 Y=0.03
+
+probe name=sideP_20 P.CONC X=2.58 Y=0.03
+probe name=sideP_10 P.CONC X=2.59 Y=0.03
+probe name=sideP00 P.CONC X=2.6 Y=0.03
+probe name=sideP01 P.CONC X=2.601 Y=0.03
+probe name=sideP02 P.CONC X=2.602 Y=0.03
+probe name=sideP03 P.CONC X=2.603 Y=0.03
+probe name=sideP04 P.CONC X=2.604 Y=0.03
+probe name=sideP05 P.CONC X=2.605 Y=0.03
+probe name=sideP07 P.CONC X=2.607 Y=0.03
+probe name=sideP10 P.CONC X=2.61 Y=0.03
+probe name=sideP20 P.CONC X=2.62 Y=0.03
+probe name=sideP30 P.CONC X=2.63 Y=0.03
+probe name=sideP40 P.CONC X=2.64 Y=0.03
+probe name=sideP50 P.CONC X=2.65 Y=0.03
+probe name=sideP70 P.CONC X=2.67 Y=0.03
+probe name=sideP100 P.CONC X=2.7 Y=0.03
+probe name=sideP200 P.CONC X=2.8 Y=0.03
+probe name=sideP300 P.CONC X=2.9 Y=0.03
+probe name=sideP400 P.CONC X=3 Y=0.03
+probe name=sideP500 P.CONC X=3.1 Y=0.03
+probe name=sideP700 P.CONC X=3.3 Y=0.03
+probe name=sideP1000 P.CONC X=3.6 Y=0.03
+probe name=sideP1500 P.CONC X=4.1 Y=0.03
+probe name=sideP2000 P.CONC X=4.6 Y=0.03
+
+probe name=sideJ_20 J.TOTAL X=2.58 Y=0.03
+probe name=sideJ_10 J.TOTAL X=2.59 Y=0.03
+probe name=sideJ00 J.TOTAL X=2.6 Y=0.03
+probe name=sideJ01 J.TOTAL X=2.601 Y=0.03
+probe name=sideJ02 J.TOTAL X=2.602 Y=0.03
+probe name=sideJ03 J.TOTAL X=2.603 Y=0.03
+probe name=sideJ04 J.TOTAL X=2.604 Y=0.03
+probe name=sideJ05 J.TOTAL X=2.605 Y=0.03
+probe name=sideJ07 J.TOTAL X=2.607 Y=0.03
+probe name=sideJ10 J.TOTAL X=2.61 Y=0.03
+probe name=sideJ20 J.TOTAL X=2.62 Y=0.03
+probe name=sideJ30 J.TOTAL X=2.63 Y=0.03
+probe name=sideJ40 J.TOTAL X=2.64 Y=0.03
+probe name=sideJ50 J.TOTAL X=2.65 Y=0.03
+probe name=sideJ70 J.TOTAL X=2.67 Y=0.03
+probe name=sideJ100 J.TOTAL X=2.7 Y=0.03
+probe name=sideJ200 J.TOTAL X=2.8 Y=0.03
+probe name=sideJ300 J.TOTAL X=2.9 Y=0.03
+probe name=sideJ400 J.TOTAL X=3 Y=0.03
+probe name=sideJ500 J.TOTAL X=3.1 Y=0.03
+probe name=sideJ700 J.TOTAL X=3.3 Y=0.03
+probe name=sideJ1000 J.TOTAL X=3.6 Y=0.03
+probe name=sideJ1500 J.TOTAL X=4.1 Y=0.03
+probe name=sideJ2000 J.TOTAL X=4.6 Y=0.03
+
+
+
+load inf=sclt_tftout_0V.str master
+output con.band val.band
+log outf=sclt_tftout_0V.log
+solve vdrain=0.0 vstep=-0.1 vfinal=-3 name=drain
+save outf=sclt_tftout_0V.str
+
+load inf=sclt_tftout_1.5V.str master
+output con.band val.band
+log outf=sclt_tftout_1.5V.log
+solve vdrain=0.0 vstep=-0.1 vfinal=-3 name=drain
+save outf=sclt_tftout_1.5V.str
+
+load inf=sclt_tftout_3V.str master
+output con.band val.band
+log outf=sclt_tftout_3V.log
+solve vdrain=0.0 vstep=-0.1 vfinal=-3 name=drain
+save outf=sclt_tftout_3V.str
+
+
+tonyplot -sclt_tftout_0V.log sclt_tftout_1.5V.log sclt_tftout_3V.log
+
+
+
+log off
+load inf=sclt_tft.str master
+
+
+solve vdrain=-0.1
+save outf=sclt_tfttran_0.1V.str
+load inf=sclt_tfttran_0.1V.str master
+solve prev
+output con.band val.band
+log outf=sclt_tfttran_0.1V.log
+solve vgate=1.5 vstep=-0.1 vfinal=-3 name=gate
+save outf=sclt_tfttran_0.1V.str
+
+load inf=sclt_tft.str master
+solve prev
+solve vdrain=-1.5
+save outf=sclt_tfttran_1.5V.str
+load inf=sclt_tfttran_1.5V.str master
+solve prev
+output con.band val.band
+log outf=sclt_tfttran_1.5V.log
+solve vgate=1.5 vstep=-0.1 vfinal=-3 name=gate
+save outf=sclt_tfttran_1.5V.str
+
+
+load inf=sclt_tft.str master
+solve prev
+solve vdrain=-3
+save outf=sclt_tfttran_3V.str
+load inf=sclt_tfttran_3V.str master
+solve prev
+output con.band val.band
+log outf=sclt_tfttran_3V.log
+solve vgate=1.5 vstep=-0.1 vfinal=-3 name=gate
+save outf=sclt_tfttran_3V.str
+
+tonyplot -overlay sclt_tfttran_0.1V.log sclt_tfttran_1.5V.log sclt_tfttran_3V.log
+
+quit
+
+
+
+
+
